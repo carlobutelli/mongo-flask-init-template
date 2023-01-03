@@ -1,0 +1,48 @@
+Create default users for test
+---
+tags:
+  - User
+produces:
+  - application/json
+definitions:
+  UserData:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 63b37958c008aa9911cd8289
+  DataResponse:
+    type: array
+    items:
+      $ref: '#/definitions/UserData'
+  UserDataResponse:
+    type: object
+    properties:
+      meta:
+        $ref: '#/definitions/BaseResponse'
+      data:
+        $ref: '#/definitions/DataResponse'
+responses:
+  200:
+    description: returns list of users ids
+    schema:
+      $ref: "#/definitions/UserDataResponse"
+    examples:
+      UserCreationResponse:
+        meta:
+          status: OK
+          status_code: 200
+          message: "all users successfully added"
+          transaction_id: 1k838bv9-9876-1234-1a23-5g87165bef5e
+        data:
+          $ref: '#/definitions/DataResponse'
+  500:
+    description: Internal server error. Check logs
+    schema:
+      $ref: '#/definitions/BaseResponse'
+    examples:
+      BaseResponse:
+        status: ERROR
+        status_code: 500
+        message: "internal server error"
+        transaction_id: 1k838bv9-9876-1234-1a23-5g87165bef5e

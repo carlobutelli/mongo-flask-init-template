@@ -1,0 +1,48 @@
+version: '3.1'
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_USER_PASSWORD}
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - net1
+
+  api:
+    container_name: api
+    privileged: true
+    build:
+      context: ./
+      dockerfile: Dockerfile-dev
+    environment:
+      - MONGODB_DATABASE_HOST=mongodb://0.0.0.0:27018/?retryWrites=true&w=majority
+      - MONGODB_USER=loki
+      - MONGODB_USER_PASSWORD=d0nt4get
+      - MONGODB_DATABASE=notes
+      - FLASK_APP=api
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - APP_SETTINGS=Development
+    depends_on:
+      - mongodb
+    links:
+      - mongodb:mongodb
+    ports:
+      - "8080:8080"
+    volumes:
+      - ".:/code"
+    networks:
+      - net1
+
+networks:
+  net1:
+    driver: bridge
+
+volumes:
+  mongo_data:
+    driver: local
